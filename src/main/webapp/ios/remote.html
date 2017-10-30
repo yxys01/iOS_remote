@@ -134,7 +134,7 @@
     <div class="content-wrapper">
         <section class="content">
         <!--适配Air 13.3 -->
-            <div class="col-sm-14 col-md-6">
+            <div class="col-sm-12 col-md-6">
                 <div class="box box-success">
                     <div class="box-header">
                         <h4 style="margin-left: 0.6em;">
@@ -153,6 +153,7 @@
                     </div>
                 </div>
             </div>
+
             <div class="col-sm-12 col-md-6">
                 <!--<div class="box box-success">
                     <div class="box-body">-->
@@ -195,33 +196,22 @@
                                   <input type="radio" name="tabs" id="tab2">
                                   <label for="tab2">安装/卸载</label>
                                   <div id="tab-content2" class="tab-content animated fadeIn">
-                                
-                                  <table>
-                                  <tbody>
-                                      <tr>
-                                        <td>
-                                        <span class="btn btn-success fileinput-button btn-left">
+                                  <div class="form-group">
+                                    <span class="btn btn-success fileinput-button btn-left">
                                          <span>上传应用</span>
                                          <input id="uploadfile" type="file" name="uploadfile" onchange="upload()"/>
-                                        </span>   
-                                        </td>  
-                                      </tr>
-                                      <tr>     
-                                        <td>                                  
-                                         <div class="input-group">
-                                        <input id="uninstallid" type="text" class="form-control" v-model="inputText"
+                                        </span>  
+                                  </div>
+
+                                  <div class="form-group">
+                                    <div class="input-group">
+                                        <input id="bundleid" type="text" class="form-control" v-model="inputText"
                                    placeholder="请输入bundle id">
                                         <span class="input-group-btn">
-                                        <button class="btn btn-success" type="button"
-                                    onclick="uninstallApp()">以BundleId卸载App</button>
+                                        <button class="btn btn-success" type="button" onclick="launchApp()">以BundleId启动App</button>
                                         </span>
-                                        </td>
                                     </div>
-                                      </tr>
-                                  </tbody>      
-                                  </table>
-                                    
-
+                                  </div>
                                    
                                   </div>
                                     <!--
@@ -239,22 +229,24 @@
                                   <input type="radio" name="tabs" id="tab3">
                                   <label for="tab3">Log</label>
                                   <div id="tab-content3" class="tab-content animated fadeIn">
-                                  <table>
-                                    <tbody>
-                                    <tr>
-                                    <td><span class="input-group-btn">
+                                  <div class="form-group">
+                                    <div class="input-group">
+                                        <span class="input-group-btn">
                                         <button id="getlogbtn" class="btn btn-success" onclick="refreshlogs()">开始日志抓取</button>
-                                        </span></td>
-                                    <td>
+                                        </span>
                                         <input id="filter-bundleid" type="text" value="com.apple.Preference"
                                                class="form-control" v-model="inputText"
                                                placeholder="请输入过滤日志的bundle id">
-                                     </td>
-                                     </tr>
+
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                  <table>
+                                    <tbody>
                                     <tr>
                                     <td>日志：</td>
                                     <td>
-                                        <div id="logs" v-html="device.logs"
+                                         <div id="logs" v-html="device.logs"
                                              style="width:465px; height: 300px;border: 1px #ccc solid; overflow-y:scroll; overflow-y:visible; overflow-x:scroll; float: left;">
                                          </div>
                                      </td>
@@ -262,12 +254,14 @@
                                     </tbody>
                                     </table>
                                 </div>
+                                </div>
                                 </li>
                                 <li>
                                   <input type="radio" name="tabs" id="tab4">
                                   <label for="tab4">截图</label>
 
                                   <div id="tab-content4" class="tab-content animated fadeIn">
+                                 
                                   <table>
                                   <tbody>
                                       <tr>
@@ -278,13 +272,13 @@
                                             <span id="save" class="btn btn-success btn-left">下载</span>
                                           </td>
                                       </tr>
-                                      <tr>                                       
-                                           <div id="imgs"></div>
-                                      </tr>
                                   </tbody>      
                                   </table>
-                                  
-                                  
+                                    <div class="form-group">
+                                    <div class="input-group">
+                                        <div id="imgs"></div>
+                                    </div>
+                                   </div>
 
                                   </div>
                                 </li>
@@ -427,11 +421,23 @@
             }.bind(self), 1000);
         }
     });
-
+    function refreshdetail() {
+        console.log("getting device info...");
+        $.ajax({
+            url: "/ios/getDeviceInfo?",
+            method: "GET",
+        })
+            .then(function (ret) {
+                deviceDetail.device.udid = ret.udid
+                deviceDetail.device.name = ret.name
+                deviceDetail.device.apps = ret.apps
+                deviceDetail.device.type = ret.type
+                 deviceDetail.device.version = ret.version
+                console.log(udid)
+            })
+    }
 
     function refreshlogs() {
-
-
         if (document.getElementById('getlogbtn').textContent == "开始") {
             var id = document.getElementById('filter-bundleid').value
             if (id == "" || id.indexOf(".") == -1) {
