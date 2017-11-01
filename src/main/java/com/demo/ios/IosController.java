@@ -289,13 +289,13 @@ public class IosController extends Controller {
         }
         fs.fileChannelCopy(file, t);
         file.delete();
-
+        //t.delete();
         bash.installIpa(filePath);
 //        t.delete();
         map.put("status", true);
         map.put("msg", "上传成功！");
         this.renderJson(map);
-
+        t.delete();
     }
 
 
